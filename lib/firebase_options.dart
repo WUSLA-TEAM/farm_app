@@ -4,9 +4,11 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
-import 'firebase_options.dart';
+
 
 // ...
+
+
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -44,14 +46,16 @@ class DefaultFirebaseOptions {
     }
   }
 
+
+
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyDE3-c2oXRBMeVoq05GSAmpijTG_1OK-u4',
-    appId: '1:836881895565:web:3478a7fc7a646a6d27d2c4',
+    appId: '1:836881895565:web:347f410d6a75ff1b27d2c4',
     messagingSenderId: '836881895565',
     projectId: 'cowecoomerce',
     authDomain: 'cowecoomerce.firebaseapp.com',
     storageBucket: 'cowecoomerce.appspot.com',
-    measurementId: 'G-0992X1NXZ4',
+    measurementId: 'G-9SYV60HRWB',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -93,5 +97,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'cowecoomerce.appspot.com',
     measurementId: 'G-0992X1NXZ4',
   );
-
 }

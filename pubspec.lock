@@ -198,6 +198,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.0"
+  flutter_pay_upi:
+    dependency: "direct main"
+    description:
+      name: flutter_pay_upi
+      sha256: "38084192f40c3a0f03432a9190fed50d064bf6d3f288b8fa973513415e009491"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
