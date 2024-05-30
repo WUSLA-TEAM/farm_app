@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "836881895565",
+    "project_id": "cowecoomerce",
+    "storage_bucket": "cowecoomerce.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:836881895565:android:7f2544c63759d55d27d2c4",
+        "android_client_info": {
+          "package_name": "com.wusla.cowecommerce"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "836881895565-6rj85nfpn3aqii9g61uqs3jeo1vkl60l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwxVDq2dmOvTMBZF69vr00mdwGJgmRlIM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "836881895565-6rj85nfpn3aqii9g61uqs3jeo1vkl60l.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "836881895565-5tvaum8v2hfffr3isnkj1fjhff7fc85d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.wusla.cowecommerce"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:836881895565:android:0211509c973906cc27d2c4",
+        "android_client_info": {
+          "package_name": "com.wusla.farm_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "836881895565-6rj85nfpn3aqii9g61uqs3jeo1vkl60l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwxVDq2dmOvTMBZF69vr00mdwGJgmRlIM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "836881895565-6rj85nfpn3aqii9g61uqs3jeo1vkl60l.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "836881895565-5tvaum8v2hfffr3isnkj1fjhff7fc85d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.wusla.cowecommerce"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
