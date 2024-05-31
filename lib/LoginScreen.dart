@@ -1,3 +1,4 @@
+import 'package:farm_app/RegisterScreen.dart';
 import 'package:farm_app/UploadScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -27,6 +28,13 @@ class LoginScreen extends StatelessWidget {
             password: password,
           );
           print('Registered and signed in: ${userCredential.user!.uid}');
+        } else if (signInError.code == 'wrong-password') {
+          // Handle wrong password error
+          print('Wrong password provided.');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Wrong password provided.')),
+          );
+          return; // Exit the function to prevent navigation
         } else {
           throw signInError; // Re-throw the error to handle it outside the nested try-catch
         }
@@ -93,6 +101,21 @@ class LoginScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () => _authenticate(context),
               child: Text('Sign In / Register'),
+            ),
+            SizedBox(height: 16.0),
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => RegisterScreen()),
+                );
+              },
+              child: Text(
+                'Don\'t have an account? Register here',
+                style: TextStyle(
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
             ),
           ],
         ),
