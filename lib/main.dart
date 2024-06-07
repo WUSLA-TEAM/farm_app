@@ -1,25 +1,49 @@
+import 'package:farm_app/src/AuthService.dart';
+import 'package:farm_app/src/ChatScreen.dart';
+import 'package:farm_app/src/HomeScreen.dart';
+import 'package:farm_app/src/LoginScreen.dart';
+import 'package:farm_app/src/sign_up_screen.dart';
+import 'package:farm_app/src/upload_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';  // Import the generated file
-
-import 'LoginScreen.dart';  // Ensure this import is correct and points to the right file
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,  // Use the options generated
+    options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      home: LoginScreen(),
+    return ChangeNotifierProvider(
+      create: (_) => AuthProvider(),
+      child: MaterialApp(
+        title: 'Farm App',
+        theme: ThemeData(
+          primarySwatch: Colors.green,
+        ),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => LoginScreen(),
+          '/signup': (context) => SignUpScreen(),
+
+          '/home': (context) => HomeScreen(),
+          '/upload': (context) => UploadScreen(),
+          // '/details': (context) => ProductDetailsScreen(
+          //   productName: '',
+          //   productPrice: '',
+          //   // productImageUrl: '',
+          //   uploaderEmail: '',4
+          //   phonenumber: ,
+          // ), // This route is for navigation only; the actual ProductDetailsScreen will be pushed with arguments
+          '/chat': (context) => ChatScreen(productId: '', receiverEmail: '',), // Assuming you have a ChatScreen
+        },
+      ),
     );
   }
 }

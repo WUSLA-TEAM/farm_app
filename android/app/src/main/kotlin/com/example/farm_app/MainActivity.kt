@@ -1,4 +1,4 @@
-package com.wusla.farm_app
+package com.wusla.stado
 
 import io.flutter.embedding.android.FlutterActivity
 
