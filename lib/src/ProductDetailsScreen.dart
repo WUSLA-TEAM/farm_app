@@ -7,6 +7,7 @@ class ProductDetailsScreen extends StatelessWidget {
   final String productImageUrl;
   final String uploaderEmail;
   final int phonenumber;
+  final String description;
 
   const ProductDetailsScreen({
     super.key,
@@ -15,6 +16,7 @@ class ProductDetailsScreen extends StatelessWidget {
     required this.productImageUrl,
     required this.uploaderEmail,
     required this.phonenumber,
+    required this.description,
   });
 
   @override
@@ -24,6 +26,17 @@ class ProductDetailsScreen extends StatelessWidget {
         title: Text(productName),
         centerTitle: true,
       ),
+      floatingActionButton: FloatingActionButton(
+            onPressed: ()async {
+              String waUrl = "https://wa.me/+91$phonenumber";
+              final Uri waUri = Uri.parse(waUrl);
+
+              if (!await launchUrl(waUri)) {
+                throw 'Could not open $waUri';
+              }
+            },
+            child: const Icon(Icons.chat),
+          ),
       body: Column(
         children: [
           Image.network(productImageUrl),
@@ -32,28 +45,15 @@ class ProductDetailsScreen extends StatelessWidget {
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           Text(
-            '\$$productPrice',
+            'Rupees $productPrice',
+            style: TextStyle(fontSize: 20, color: Colors.grey[700]),
+          ),
+          Text(
+            '$description',
             style: TextStyle(fontSize: 20, color: Colors.grey[700]),
           ),
           const Spacer(),
-          FloatingActionButton(
-            onPressed: ()async {
-              String waUrl = "https://wa.me/+91$phonenumber";
-              final Uri waUri = Uri.parse(waUrl);
-
-              if (!await launchUrl(waUri)) {
-                throw 'Could not open $waUri';
-              }
-              // Navigator.pushNamed(
-              //   context,
-              //   '/chat',
-              //   arguments: {
-              //     'uploaderEmail': uploaderEmail,
-              //   },
-              // );
-            },
-            child: const Icon(Icons.chat),
-          ),
+          
         ],
       ),
     );

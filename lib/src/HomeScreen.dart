@@ -67,6 +67,7 @@ class HomeScreen extends StatelessWidget {
                           productImageUrl: product['imageUrl'],
                           uploaderEmail: product['uploaderEmail'],
                           phonenumber: product['phoneNumber'],
+                          description: product['description'],
                         ),
                       ),
                     );
@@ -82,11 +83,11 @@ class HomeScreen extends StatelessWidget {
                         Expanded(
                           child: ClipRRect(
                             borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                            // child: Image.network(
-                            //   product['imageUrl'],
-                            //   fit: BoxFit.cover,
-                            //   width: double.infinity,
-                            // ),
+                            child: Image.network(
+                              product['imageUrl'],
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            ),
                           ),
                         ),
                         Padding(
@@ -102,7 +103,7 @@ class HomeScreen extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: Text(
-                            '\$${product['price']}',
+                            'Rupees${product['price']}',
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey[700],

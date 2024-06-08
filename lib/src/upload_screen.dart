@@ -17,6 +17,7 @@ class _UploadScreenState extends State<UploadScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
   File? _image;
   final picker = ImagePicker();
 
@@ -40,6 +41,7 @@ class _UploadScreenState extends State<UploadScreen> {
     String? userEmail = authProvider.getUserEmail();
     String phoneNumber = _phoneNumberController.text.trim();
     int? numPhone = int.tryParse(phoneNumber);
+    String description = _descriptionController.text.trim();
 
     try {
       // Generate a unique document ID
@@ -61,6 +63,7 @@ class _UploadScreenState extends State<UploadScreen> {
         'imageUrl': imageUrl,
         'uploaderEmail': userEmail,
         'phoneNumber': numPhone,
+        'description' : description,
       });
 
       print('Product uploaded');
@@ -121,6 +124,15 @@ class _UploadScreenState extends State<UploadScreen> {
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(
+                  labelText: 'description',
+                  border: OutlineInputBorder(),
+                ),
+                
               ),
               const SizedBox(height: 16),
               ElevatedButton(
