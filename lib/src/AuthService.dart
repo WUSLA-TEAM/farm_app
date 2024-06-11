@@ -1,19 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
 
 class AuthProvider with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  // ignore: unused_field
-  User? _user;
+
+  bool isUserLoggedIn() {
+    var box = Hive.box('userBox');
+    return box.get('userEmail') != null;
+  }
+
+  String? getUserEmail() {
+    var box = Hive.box('userBox');
+    return box.get('userEmail');
+  }
+
   Future<bool> signInWithEmail(String email, String password) async {
     try {
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
-      return true; // Return true on successful sign in
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      var box = Hive.box('userBox');
+      box.put('userEmail', userCredential.user!.email);
+      notifyListeners();
+      return true;
     } catch (e) {
-      print(e);
-      return false; // Return false on failure
+      return false;
     }
   }
 
@@ -23,14 +35,13 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> signUpWithEmail(String email, String password) async {
     try {
-      await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      var box = Hive.box('userBox');
+      box.put('userEmail', userCredential.user!.email);
+      notifyListeners();
     } catch (e) {
-      print(e);
+      throw e;
     }
-  }
-
-    String? getUserEmail() {
-    return _auth.currentUser?.email; // Use the current user's email if available
   }
 
   User? get currentUser {
@@ -39,6 +50,9 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> signOut() async {
     await _auth.signOut();
+    var box = Hive.box('userBox');
+    box.delete('userEmail');
+    notifyListeners();
   }
 
   Future<List<Map<String, dynamic>>> fetchProducts() async {
@@ -48,11 +62,5 @@ class AuthProvider with ChangeNotifier {
     } catch (e) {
       throw Exception('Failed to fetch products: $e');
     }
-  }
-
-  Future<void> logout() async {
-    await _auth.signOut();
-    _user = null;
-    notifyListeners();
   }
 }

@@ -18,18 +18,18 @@ class HomeScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.logout),
           onPressed: () async {
-            await authProvider.logout();
+            await authProvider.signOut();
             Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
           },
         ),
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(Icons.add),
-        //     onPressed: () {
-        //       Navigator.pushNamed(context, '/upload');
-        //     },
-        //   ),
-        // ],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () {
+              Navigator.pushNamed(context, '/productlist');
+            },
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(onPressed: () {
         Navigator.pushNamed(context, '/upload');
@@ -68,6 +68,9 @@ class HomeScreen extends StatelessWidget {
                           uploaderEmail: product['uploaderEmail'],
                           phonenumber: product['phoneNumber'],
                           description: product['description'],
+                          category: product['category'],
+                          height: product['height'],
+                          weight: product['weight'],
                         ),
                       ),
                     );

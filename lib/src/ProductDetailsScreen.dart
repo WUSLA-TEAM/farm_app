@@ -8,6 +8,9 @@ class ProductDetailsScreen extends StatelessWidget {
   final String uploaderEmail;
   final int phonenumber;
   final String description;
+  final String category;
+  final String weight;
+  final String height;
 
   const ProductDetailsScreen({
     super.key,
@@ -17,6 +20,9 @@ class ProductDetailsScreen extends StatelessWidget {
     required this.uploaderEmail,
     required this.phonenumber,
     required this.description,
+    required this.category,
+    required this.weight,
+    required this.height,
   });
 
   @override
@@ -40,16 +46,34 @@ class ProductDetailsScreen extends StatelessWidget {
       body: Column(
         children: [
           Image.network(productImageUrl),
-          Text(
-            productName,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          Text(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text(
+                productName,
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              Text(
             'Rupees $productPrice',
+            style: TextStyle(fontSize: 25 , color: Colors.green[700], fontWeight: FontWeight.bold),
+          ),
+            ],
+          ),
+          
+          Text(
+            '$description',
             style: TextStyle(fontSize: 20, color: Colors.grey[700]),
           ),
           Text(
-            '$description',
+            '$category',
+            style: TextStyle(fontSize: 20, color: Colors.grey[700]),
+          ),
+          Text(
+            'height: $height m',
+            style: TextStyle(fontSize: 20, color: Colors.grey[700]),
+          ),
+          Text(
+            'weight: $weight kg',
             style: TextStyle(fontSize: 20, color: Colors.grey[700]),
           ),
           const Spacer(),

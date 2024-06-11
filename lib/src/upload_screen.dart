@@ -18,8 +18,27 @@ class _UploadScreenState extends State<UploadScreen> {
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _weightController = TextEditingController();
+  final TextEditingController _heightController = TextEditingController();
+  final TextEditingController _age = TextEditingController();
+
   File? _image;
   final picker = ImagePicker();
+  String? _selectedCategory;
+  bool _showAddCategoryButton = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkCategories();
+  }
+
+  Future<void> _checkCategories() async {
+    final snapshot = await FirebaseFirestore.instance.collection('categories').get();
+    setState(() {
+      _showAddCategoryButton = snapshot.docs.isEmpty;
+    });
+  }
 
   Future<void> _pickImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -32,30 +51,91 @@ class _UploadScreenState extends State<UploadScreen> {
     });
   }
 
+  Future<void> _addCategory() async {
+    TextEditingController categoryController = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add Category'),
+        content: TextField(
+          controller: categoryController,
+          decoration: const InputDecoration(hintText: 'Category Name'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              String categoryName = categoryController.text.trim();
+              if (categoryName.isNotEmpty) {
+                await FirebaseFirestore.instance.collection('categories').add({'name': categoryName});
+                _checkCategories();
+                Navigator.pop(context);
+              }
+            },
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _uploadProduct() async {
-    if (_image == null) return;
+    if (_selectedCategory == null || _image == null) {
+      _showErrorMessage('Please select an image and category.');
+      return;
+    }
 
     String name = _nameController.text.trim();
     String price = _priceController.text.trim();
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     String? userEmail = authProvider.getUserEmail();
     String phoneNumber = _phoneNumberController.text.trim();
-    int? numPhone = int.tryParse(phoneNumber);
+    int? numPhone = int.parse(phoneNumber);
     String description = _descriptionController.text.trim();
+    String weight = _weightController.text.trim();
+    String height = _heightController.text.trim();
+    String age = _age.text.trim();
+    int? numage = int.parse(age);
+
+    if (name.isEmpty) {
+      _showErrorMessage('Please enter a name.');
+      return;
+    }
+    if (price.isEmpty) {
+      _showErrorMessage('Please enter a price.');
+      return;
+    }
+    if (phoneNumber.isEmpty) {
+      _showErrorMessage('Please enter a phone number.');
+      return;
+    }
+    if (description.isEmpty) {
+      _showErrorMessage('Please enter a description.');
+      return;
+    }
+    if (weight.isEmpty) {
+      _showErrorMessage('Please enter a weight.');
+      return;
+    }
+    if (height.isEmpty) {
+      _showErrorMessage('Please enter a height.');
+      return;
+    }
+
+    if (age.isEmpty) {
+      _showErrorMessage('Please entre a age');
+    }
 
     try {
-      // Generate a unique document ID
       DocumentReference docRef = FirebaseFirestore.instance.collection('products').doc();
       String productId = docRef.id;
 
-      // Upload image to Firebase Storage
       String fileName = DateTime.now().millisecondsSinceEpoch.toString();
       Reference storageReference = FirebaseStorage.instance.ref().child('products/$fileName');
       UploadTask uploadTask = storageReference.putFile(_image!);
       TaskSnapshot snapshot = await uploadTask;
       String imageUrl = await snapshot.ref.getDownloadURL();
 
-      // Upload product details to Firestore with the generated productId
       await docRef.set({
         'productId': productId,
         'name': name,
@@ -63,19 +143,50 @@ class _UploadScreenState extends State<UploadScreen> {
         'imageUrl': imageUrl,
         'uploaderEmail': userEmail,
         'phoneNumber': numPhone,
-        'description' : description,
+        'description': description,
+        'category': _selectedCategory,
+        'height': height,
+        'weight': weight,
+        'age' : numage,
       });
 
-      print('Product uploaded');
+      _clearFields();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Product uploaded successfully')),
+        const SnackBar(
+          content: Text('Product uploaded successfully'),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.green,
+          margin: EdgeInsets.all(10),
+        ),
       );
     } catch (e) {
-      print('Failed to upload product: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to upload product: $e')),
-      );
+      _showErrorMessage('Failed to upload product: $e');
     }
+  }
+
+  void _clearFields() {
+    setState(() {
+      _nameController.clear();
+      _priceController.clear();
+      _phoneNumberController.clear();
+      _descriptionController.clear();
+      _weightController.clear();
+      _heightController.clear();
+      _selectedCategory = null;
+      _image = null;
+      _age.clear();
+    });
+  }
+
+  void _showErrorMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.all(10),
+      ),
+    );
   }
 
   @override
@@ -84,6 +195,13 @@ class _UploadScreenState extends State<UploadScreen> {
       appBar: AppBar(
         title: const Text('Upload Product'),
         centerTitle: true,
+        actions: [
+          if (_showAddCategoryButton)
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: _addCategory,
+            ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -100,12 +218,64 @@ class _UploadScreenState extends State<UploadScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              TextField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Product Name',
-                  border: OutlineInputBorder(),
-                ),
+              StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance.collection('categories').snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const CircularProgressIndicator();
+                  }
+                  final categories = snapshot.data!.docs
+                      .where((doc) => doc.data() != null && (doc.data() as Map<String, dynamic>).containsKey('name'))
+                      .map((doc) => doc['name'] as String)
+                      .toList();
+
+
+                  return DropdownButtonFormField(
+                    items: categories.map((category) {
+                      return DropdownMenuItem(
+                        child: Text(category),
+                        value: category,
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedCategory = value as String?;
+                      });
+                    },
+                    decoration: const InputDecoration(
+                      labelText: 'Category',
+                      border: OutlineInputBorder(),
+                    ),
+                    value: _selectedCategory,
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Item',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+
+                  Expanded(
+                    child: TextField(
+                      controller: _age,
+                      decoration: const InputDecoration(
+                        labelText: 'Age',
+                        border: OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               TextField(
@@ -118,21 +288,46 @@ class _UploadScreenState extends State<UploadScreen> {
               ),
               const SizedBox(height: 16),
               TextField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(
+                  labelText: 'Description',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _heightController,
+                      decoration: const InputDecoration(
+                        labelText: 'Height',
+                        border: OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: TextField(
+                      controller: _weightController,
+                      decoration: const InputDecoration(
+                        labelText: 'Weight',
+                        border: OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              TextField(
                 controller: _phoneNumberController,
                 decoration: const InputDecoration(
                   labelText: 'Phone Number',
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'description',
-                  border: OutlineInputBorder(),
-                ),
-                
               ),
               const SizedBox(height: 16),
               ElevatedButton(

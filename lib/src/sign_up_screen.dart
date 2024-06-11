@@ -1,8 +1,6 @@
-// sign_up_screen.dart
 import 'package:farm_app/src/AuthService.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -78,6 +76,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                   if (password == confirmPassword) {
                     authProvider.signUpWithEmail(email, password);
+                    Navigator.pushReplacementNamed(context, '/home');
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Passwords do not match')),
